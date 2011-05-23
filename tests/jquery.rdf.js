@@ -1119,7 +1119,7 @@ test("creating a new databank", function() {
 	equals(e[triples[0].subject.value][triples[0].property.value][0].value, 'http://www.blogger.com/profile/1109404');
 
   var j = data.dump({ serialize: true });
-  equals(j, '{"' + triples[0].subject.value + '": {"http://purl.org/dc/elements/1.1/creator": [{"type": "uri", "value": "http://www.blogger.com/profile/1109404"}]}, "http://www.blogger.com/profile/1109404": {"http://xmlns.com/foaf/0.1/img": [{"type": "uri", "value": "' + triples[0].subject.value + '"}]}}');
+  equals(j, '{"' + triples[0].subject.value + '":{"http://purl.org/dc/elements/1.1/creator":[{"type":"uri","value":"http://www.blogger.com/profile/1109404"}]},"http://www.blogger.com/profile/1109404":{"http://xmlns.com/foaf/0.1/img":[{"type":"uri","value":"' + triples[0].subject.value + '"}]}}');
 
 	var x = data.dump({ format: 'application/rdf+xml', namespaces: namespaces });
 	equals(x.documentElement.nodeName, 'rdf:RDF');
@@ -1715,6 +1715,8 @@ test("removing a triple from a databank", function () {
   d.remove('_:a foaf:knows _:b');
   equals(d.size(), 1);
   equals(r.size(), 0);
+  d.remove('_:a foaf:surname "Smith"');
+  equals(typeof d.subjectIndex['_:a'], 'undefined', 'Removing last triple for a subject should remove the subject from the subjectIndex.')
 });
 
 test("updating queries when triples are removed from a databank", function () {
