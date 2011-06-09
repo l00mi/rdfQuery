@@ -1520,7 +1520,7 @@
       if (ptriples !== undefined) {
         ptriples.splice($.inArray(triple, ptriples), 1);
         if($(ptriples).size() === 0) {
-            delete this.propertyIndex[triple.subject];
+            delete this.propertyIndex[triple.property];
         }
       }
       if (triple.object.type === 'uri' || triple.object.type === 'bnode') {
@@ -1528,7 +1528,7 @@
         if (otriples !== undefined) {
           otriples.splice($.inArray(triple, otriples), 1);
           if($(otriples).size() === 0) {
-              delete this.objectIndex[triple.subject];
+              delete this.objectIndex[triple.object];
           }
         }
       }
