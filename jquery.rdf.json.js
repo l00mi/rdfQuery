@@ -51,7 +51,8 @@
                 if (o.lang !== undefined) {
                   opts.lang = o.lang;
                 }
-                object = $.rdf.literal('"' + o.value + '"', opts);
+                var escapedValue = typeof o.value === "string" ? o.value.replace(/\"/g,'\\"') : o.value;
+                object = $.rdf.literal('"' + escapedValue + '"', opts);
               }
             }
             triples.push($.rdf.triple(subject, property, object));
