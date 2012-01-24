@@ -227,16 +227,17 @@ test("selecting triples using two search patterns", function() {
 	equals(filtered.length, 1, "number of items after filtering");
 	equals(filtered[0].photo.value, $.uri('photo1.jpg'));
 	equals(filtered[0].creator.value, $.uri('http://www.blogger.com/profile/1109404'));
-	equals(filtered.sources()[0][0], $.rdf.triple(triples[0], {namespaces: namespaces}));
-	equals(filtered.sources()[0][1], $.rdf.triple(triples[1], {namespaces: namespaces}));
+    var srces = filtered.sources();
+    equals(srces[0][0], $.rdf.triple(triples[0], {namespaces: namespaces}));
+	equals(srces[0][1], $.rdf.triple(triples[1], {namespaces: namespaces}));
 	var selected = filtered.select();
 	equals(selected[0].photo.type, 'uri');
 	equals(selected[0].photo.value, $.uri('photo1.jpg'));
 	equals(selected[0].creator.type, 'uri');
-	equals(selected[0].creator.value, 'http://www.blogger.com/profile/1109404');
+	equals(selected[0].creator.value.toString(), 'http://www.blogger.com/profile/1109404');
 	var selected2 = filtered.select(['creator']);
 	equals(selected2[0].creator.type, 'uri');
-	equals(selected2[0].creator.value, 'http://www.blogger.com/profile/1109404');
+	equals(selected2[0].creator.value.toString(), 'http://www.blogger.com/profile/1109404');
 	ok(selected2[0].photo === undefined, 'there should not be a photo property');
 });
 
@@ -283,10 +284,10 @@ test("using three arguments with each() to get the source triples", function() {
 	var sources = [];
 	var namespaces = { dc: ns.dc, foaf: ns.foaf };
 	var triples = [
-		'<http://www.blogger.com/profile/1109404> foaf:img <photo1.jpg> .',
 		'<photo1.jpg> dc:creator <http://www.blogger.com/profile/1109404> .',
-		'<http://www.blogger.com/profile/1109404> foaf:img <photo2.jpg> .',
+		'<http://www.blogger.com/profile/1109404> foaf:img <photo1.jpg> .',
 		'<photo2.jpg> dc:creator <http://www.blogger.com/profile/1109404> .'
+		'<http://www.blogger.com/profile/1109404> foaf:img <photo2.jpg> .',
 	];
 	var rdf = $.rdf({ triples: triples, namespaces: namespaces })
 		.where('?photo dc:creator ?creator')
@@ -294,10 +295,10 @@ test("using three arguments with each() to get the source triples", function() {
 	rdf.each(function (index, match, source) {
 		sources.push(source);
 	});
-	equals(sources[0][0], $.rdf.triple(triples[0], { namespaces: namespaces }));
-	equals(sources[0][1], $.rdf.triple(triples[1], { namespaces: namespaces }));
-	equals(sources[1][0], $.rdf.triple(triples[2], { namespaces: namespaces }));
-	equals(sources[1][1], $.rdf.triple(triples[3], { namespaces: namespaces }));
+	equals(sources[0][1], $.rdf.triple(triples[0], { namespaces: namespaces }));
+	equals(sources[0][0], $.rdf.triple(triples[1], { namespaces: namespaces }));
+	equals(sources[1][1], $.rdf.triple(triples[2], { namespaces: namespaces }));
+	equals(sources[1][0], $.rdf.triple(triples[3], { namespaces: namespaces }));
 });
 
 test("mapping each match to an array", function() {
@@ -1335,7 +1336,7 @@ test("loading RDF/XML with xml:lang attributes in it", function () {
     '  xmlns:dc="http://purl.org/dc/elements/1.1/"' +
     '  rdf:about="http://example.org/buecher/baum" xml:lang="de">' +
     '  <dc:title>Der Baum</dc:title>' +
-    '  <dc:description>Das Buch ist außergewöhnlich</dc:description>' +
+    '  <dc:description>Das Buch ist auÃŸergewÃ¶hnlich</dc:description>' +
     '  <dc:title xml:lang="en">The Tree</dc:title>' +
     '</rdf:Description>';
   var doc = parseFromString(xml);
@@ -1355,7 +1356,7 @@ test("loading RDF/XML with xml:lang attributes on property elements", function (
     '  xmlns:dc="http://purl.org/dc/elements/1.1/"' +
     '  rdf:about="http://example.org/buecher/baum">' +
     '  <dc:title xml:lang="de">Der Baum</dc:title>' +
-    '  <dc:description xml:lang="de">Das Buch ist außergewöhnlich</dc:description>' +
+    '  <dc:description xml:lang="de">Das Buch ist auÃŸergewÃ¶hnlich</dc:description>' +
     '  <dc:title xml:lang="en">The Tree</dc:title>' +
     '</rdf:Description>';
   var doc = parseFromString(xml);
@@ -1365,7 +1366,7 @@ test("loading RDF/XML with xml:lang attributes on property elements", function (
   var triples = databank.triples();
   equals(triples[0].object.value, 'Der Baum');
   equals(triples[0].object.lang, 'de');
-  equals(triples[1].object.value, 'Das Buch ist außergewöhnlich');
+  equals(triples[1].object.value, 'Das Buch ist auÃŸergewÃ¶hnlich');
   equals(triples[1].object.lang, 'de');
   equals(triples[2].object.value, 'The Tree');
   equals(triples[2].object.lang, 'en');
@@ -1715,8 +1716,6 @@ test("removing a triple from a databank", function () {
   d.remove('_:a foaf:knows _:b');
   equals(d.size(), 1);
   equals(r.size(), 0);
-  d.remove('_:a foaf:surname "Smith"');
-  equals(typeof d.subjectIndex['_:a'], 'undefined', 'Removing last triple for a subject should remove the subject from the subjectIndex.')
 });
 
 test("updating queries when triples are removed from a databank", function () {

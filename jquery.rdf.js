@@ -154,7 +154,7 @@
         return bindings === null ? null : { bindings: bindings, triples: [triple] };
       });
     },
-
+    
     mergeMatches = function (existingMs, newMs, optional) {
       return $.map(existingMs, function (existingM, i) {
         var compatibleMs = $.map(newMs, function (newM) {
@@ -1120,6 +1120,7 @@
      *   });
      */
     sources: function () {
+         
       return $($.map(this.matches, function (match) {
         // return an array-of-an-array because arrays automatically get expanded by $.map()
         return [match.triples];
@@ -1286,8 +1287,8 @@
       return $(this).children('*').rdf(callback);
     } else if ($(this).length > 0) {
       triples = $(this).map(function (i, elem) {
-        return $.map($.rdf.gleaners, function (gleaner) {
-          return gleaner.call($(elem), { callback: callback });
+        return $.map($.rdf.gleaners, function (g) {
+          return g.gleaner.call($(elem), { callback: callback });
         });
       });
       return $.rdf({ triples: triples, namespaces: $(this).xmlns() });
@@ -1302,11 +1303,8 @@
       var j = $(a),
         resource = m[3] ? j.safeCurie(m[3]) : null,
         isAbout = false;
-      $.each($.rdf.gleaners, function (i, gleaner) {
-        isAbout = gleaner.call(j, { about: resource });
-        if (isAbout) {
-          return null;
-        }
+      $.each($.rdf.gleaners, function (i, g) {
+        isAbout |= g.gleaner.call(j, { about: resource });
       });
       return isAbout;
     },
@@ -1315,15 +1313,31 @@
       var j = $(a),
         type = m[3] ? j.curie(m[3]) : null,
         isType = false;
-      $.each($.rdf.gleaners, function (i, gleaner) {
-        if (gleaner.call(j, { type: type })) {
-          isType = true;
-          return null;
-        }
+      $.each($.rdf.gleaners, function (i, g) {
+          isType |= g.gleaner.call(j, {  type: type });
+      });
+      return isType;
+    },
+
+	itemid: function (a, i, m) {
+      var j = $(a),
+        resource = m[3] ? j.safeCurie(m[3]) : null,
+        isItemid = false;
+      $.each($.rdf.gleaners, function (i, g) {
+        isItemid |= g.gleaner.call(j, { itemid: resource });
+      });
+      return isItemid;
+    },
+	
+	itemtype: function (a, i, m) {
+      var j = $(a),
+        type = m[3] ? j.curie(m[3]) : null,
+        isType = false;
+      $.each($.rdf.gleaners, function (i, g) {
+          isType |= g.gleaner.call(j, {  itemtype: type });
       });
       return isType;
     }
-
   });
 
   /**
@@ -1514,14 +1528,14 @@
         striples.splice($.inArray(triple, striples), 1);
         if($(striples).size() === 0) {
             delete this.subjectIndex[triple.subject];
-        }
+        }		
       }
       ptriples = this.propertyIndex[triple.property];
       if (ptriples !== undefined) {
         ptriples.splice($.inArray(triple, ptriples), 1);
         if($(ptriples).size() === 0) {
             delete this.propertyIndex[triple.property];
-        }
+        }		
       }
       if (triple.object.type === 'uri' || triple.object.type === 'bnode') {
         otriples = this.objectIndex[triple.object];
@@ -1529,7 +1543,7 @@
           otriples.splice($.inArray(triple, otriples), 1);
           if($(otriples).size() === 0) {
               delete this.objectIndex[triple.object];
-          }
+          }		  
         }
       }
       removeFromDatabankQueries(this, triple);

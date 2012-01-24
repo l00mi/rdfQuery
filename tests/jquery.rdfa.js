@@ -121,7 +121,7 @@ test("Structured XML Literal", function () {
 
 test("RDFa from html element", function () {
   testTriples($('html').rdf(), 
-              [$.rdf.triple('<> <http://www.w3.org/1999/xhtml/vocab#stylesheet> <../jquery/jquery.qunit/qunit.css>')]);
+              [$.rdf.triple('<> <http://www.w3.org/1999/xhtml/vocab#stylesheet> <../jquery/tests/qunit/qunit.css>')]);
 });
 
 test("XMLLiteral including comments", function () {
@@ -966,7 +966,7 @@ test("adding RDFa where the subject is a resource which is already referenced", 
   var a = $('#main > p > a');
   a.rdfa('<http://www.blogger.com/profile/1109404> foaf:img <photo1.jpg> .');
   equals(a.attr('about'), 'photo1.jpg');
-  equals(a.attr('rel'), '');
+  equals(a.attr('rel'), undefined);
   equals(a.attr('rev'), 'foaf:img');
   equals(a.attr('href'), 'http://www.blogger.com/profile/1109404');
   equals(a.attr('resource'), undefined);
