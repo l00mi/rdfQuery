@@ -549,7 +549,6 @@
     },
 
     addRDFa = function (triple) {
-	debugger;
       var hasContent, hasRelation, hasRDFa, overridableObject, span,
         subject, sameSubject,
         object, sameObject,
