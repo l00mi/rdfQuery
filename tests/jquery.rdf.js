@@ -286,8 +286,8 @@ test("using three arguments with each() to get the source triples", function() {
 	var triples = [
 		'<photo1.jpg> dc:creator <http://www.blogger.com/profile/1109404> .',
 		'<http://www.blogger.com/profile/1109404> foaf:img <photo1.jpg> .',
-		'<photo2.jpg> dc:creator <http://www.blogger.com/profile/1109404> .'
-		'<http://www.blogger.com/profile/1109404> foaf:img <photo2.jpg> .',
+		'<photo2.jpg> dc:creator <http://www.blogger.com/profile/1109404> .',
+		'<http://www.blogger.com/profile/1109404> foaf:img <photo2.jpg> .'
 	];
 	var rdf = $.rdf({ triples: triples, namespaces: namespaces })
 		.where('?photo dc:creator ?creator')
