@@ -120,14 +120,12 @@ test("multiple elements with itemid and itemprop attributes", function () {
 				'<p itemid="bPerson' + i + '" itemprop="name">Person ' + i + '</p></div>');
   }
   var t1 = new Date();
-  //main.microdata();  
   var triples = $.microdata.triples($(main));
   var rdf = $.rdf.databank(triples);
   var t2 = new Date();
   var d = t2 - t1;
   ok(d < 1000, "it should parse in less than a second: " + d);
   $('#main > *').remove();
-  //$('#main').removeMicrodata('microdata.triples');//????????????
 });
 
 test("multiple elements with itemid, rel and resource attributes", function () {
@@ -142,15 +140,12 @@ test("multiple elements with itemid, rel and resource attributes", function () {
   var t1 = new Date();
   var triples = $.microdata.triples($(main));
   var rdf = $.rdf.databank(triples);
-
-  //main.microdata();
   var triples = $.microdata.triples($(main));
   var rdf = $.rdf.databank(triples);
   var t2 = new Date();
   var d = t2 - t1;
   ok(d < 1000, "it should parse in less than a second: " + d);
   $('#main > *').remove();
-  //$('#main').removeMicrodata('micordata.triples');//???????? ignore
 });
 
 module("RDF Gleaner");
@@ -221,12 +216,12 @@ test("Test 0008", function() {
 });
 
 test("Test 0009", function() {
-	$('head').append('<span itemscope itemid="http://example.org/people#Person2"><link itemprop="http://purl.org/dc/elements/1.1/knows"'+
+	$('#main').append('<span itemscope itemid="http://example.org/people#Person2"><link itemprop="http://purl.org/dc/elements/1.1/knows"'+
 	'href="http://example.org/people#Person1"/></span>');
-	var triples = $.microdata.triples($('span'));
+	var triples = $.microdata.triples($('#main > span'));
 	testTriples(triples, 
 	            [$.rdf.triple('<http://example.org/people#Person2> dc:knows <http://example.org/people#Person1> .', ns)]);
-	$('span').remove();
+	$('#main > span').remove();
 });
 
 test("Test 0011", function() {
@@ -240,11 +235,11 @@ test("Test 0011", function() {
 });
 
 test("Test 0012", function() {
-	$('head').append('<span itemscope itemid="http://example.org/node"><meta itemprop="http://example.org/property" xml:lang="fr" content="chat" /></span>');
-	var triples = $.microdata.triples($('span'));
+	$('#main').append('<span itemscope itemid="http://example.org/node"><meta itemprop="http://example.org/property" xml:lang="fr" content="chat" /></span>');
+	var triples = $.microdata.triples($('#main > span'));
 	testTriples(triples, 
 		[$.rdf.triple('<http://example.org/node> <http://example.org/property> "chat" .')]);
-	$('meta').remove();
+	$('#main > span').remove();
 })
 
 /* This test has been amended because replacing the head is difficult in the QUnit test runner. The logic is the same. */
@@ -268,14 +263,14 @@ test("Test 0014", function() {
 });
 
 test("Test 0015", function() {	
-	$('head').append('<span itemscope>'+
+	$('#main').append('<span itemscope>'+
 		'<link itemprop="http://purl.org/dc/elements/1.1/source" href="urn:isbn:0140449132" /></span><p itemscope><meta  itemprop="http://purl.org/dc/elements/1.1/creator" content="Fyodor Dostoevsky" /></p>');
 	testTriples($.microdata.triples($('span')), 
 		[$.rdf.triple('<> dc:source <urn:isbn:0140449132> .', ns)]);
 	testTriples($.microdata.triples($('p')), 
 		[$.rdf.triple('<> dc:creator "Fyodor Dostoevsky"  .', ns)]);
 	$('link[href="urn:isbn:0140449132"]').remove();
-	$('meta').remove();
+	$('#main > span').remove();
 })
 
 test("Test 0017", function() {
@@ -311,18 +306,11 @@ test("Test 0021", function() {
 	setup('<div><span class="attribution-line" itemscope>this photo was taken by <span  itemprop="http://purl.org/dc/elements/1.1/creator">Mark Birbeck</span></span></div>');
 	testTriples($.microdata.triples($('#main > div > span')),
 		[$.rdf.triple('<> dc:creator "Mark Birbeck" .', ns)]);
-/* //currently not supported
-	testTriples($.microdata.triples($('#main > div > span > span')),
-		[$.rdf.triple('<> dc:creator "Mark Birbeck" .', ns)]);
-	testTriples($.microdata.triples($('#main > div')),
-		[$.rdf.triple('<> dc:creator "Mark Birbeck" .', ns)]);*/
 	$('#main > div').remove();
 });
 
 test("Test 0023", function() {
 	setup('<div itemscope id="photo1">This photo was taken by <span itemprop="http://purl.org/dc/elements/1.1/creator">Mark Birbeck</span></div>');
-//	testTriples($('#main > div > span').microdata(),
-//		[$.rdf.triple('<> dc:creator "Mark Birbeck" .', ns)]);
 	testTriples($.microdata.triples($('#main > div')),
 		[$.rdf.triple('<> dc:creator "Mark Birbeck" .', ns)]);
 	$('#main > div').remove();
@@ -335,13 +323,7 @@ test("Test 0025", function() {
 	testTriples($.microdata.triples($('#main > p')),
 		[$.rdf.triple('<#me> foaf:name "Ben Adida" .', ns),
 		$.rdf.triple('<> dc:creator <#me> .', ns)]);
-	/*testTriples($.microdata.triples($('#main > p > span > span')),
-		[$.rdf.triple('<#me> foaf:name "Ben Adida" .', ns)]);
-	testTriples($.microdata.triples($('#main > p > span')),
-		[$.rdf.triple('<> dc:creator <#me> .', ns),
-		 $.rdf.triple('<#me> foaf:name "Ben Adida" .', ns)]);
-*/
-	 $('#main > p').remove();
+	$('#main > p').remove();
 });
 
 test("Test 0026", function() {
@@ -373,15 +355,12 @@ test("Test 0033", function() {
 	testTriples(md,[$.rdf.triple('<> foaf:name "Ben Adida" .',ns),$.rdf.triple('<> dc:creator <> .',ns)]); //?? check for blank node
 
 	triple = md[0];
-	//equals(triple.subject.type, 'bnode', "the subject of the foaf:name triple should be blank");
 	equals(triple.property, $.rdf.resource('foaf:name', ns));
 	equals(triple.object, $.rdf.literal('"Ben Adida"'));
 	
 	triple = md[1];
 	equals(triple.subject, $.rdf.resource('<>'));
 	equals(triple.property, $.rdf.resource('dc:creator', ns));
-	//equals(triple.object.type, 'bnode', "the object of the dc:creator triple should be blank");
-	
 	ok(md[1].object === md[0].subject, "the object of the first triple should be the same as the subject of the second triple");
 	
 	$('#main > p').remove();
@@ -435,16 +414,12 @@ test("Test 0046", function () {
   testTriples(triples,[$.rdf.triple('<> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .',ns),
 					   $.rdf.triple('<> foaf:name "John Doe" .',ns),
 					   $.rdf.triple('<> <http://xmlns.com/foaf/0.1/maker> <> .',ns)]);
-  //equals(triples[0].subject.type, 'bnode');
   equals(triples[0].property.value, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
   equals(triples[0].object.value, 'http://xmlns.com/foaf/0.1/Document');
   equals(triples[0].subject, triples[1].subject);
-  //equals(triples[1].subject.type, 'bnode');
   equals(triples[1].property.value, 'http://xmlns.com/foaf/0.1/name');
   equals(triples[1].object.value, 'John Doe');
-  //equals(triples[2].subject.type, 'bnode');
   equals(triples[2].property.value, 'http://xmlns.com/foaf/0.1/maker');
-  //equals(triples[2].object.type, 'bnode');
   equals(triples[2].object, triples[2].subject);
   $('#main > div').remove();
 });
@@ -458,11 +433,9 @@ test("Test 0047", function () {
   testTriples(triples,[$.rdf.triple('<> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .',ns),
 					   $.rdf.triple('<http://www.example.org/#me> foaf:name "John Doe" .',ns),
 					   $.rdf.triple('<> <http://xmlns.com/foaf/0.1/maker> <http://www.example.org/#me> .',ns)]);
-  //equals(triples[0].subject.type, 'bnode');
   equals(triples[0].property.value, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
   equals(triples[0].object.value, 'http://xmlns.com/foaf/0.1/Document');
   equals(triples[0].subject, triples[2].subject);
-  //equals(triples[2].subject.type, 'bnode');
   equals(triples[2].property.value, 'http://xmlns.com/foaf/0.1/maker');
   equals(triples[2].object.value, 'http://www.example.org/#me');
   equals(triples[1], $.rdf.triple('<http://www.example.org/#me> <http://xmlns.com/foaf/0.1/name> "John Doe" .'));
@@ -480,12 +453,10 @@ test("Test 0048", function () {
 					   $.rdf.triple('<http://www.example.org/#me> foaf:knows <> .',ns)]);
  
   equals(triples[0], $.rdf.triple('<http://www.example.org/#me> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .'));
-  //equals(triples[1].subject.type, 'bnode');
   equals(triples[1].property.value, 'http://xmlns.com/foaf/0.1/name');
   equals(triples[1].object.value, 'John Doe');
   equals(triples[2].subject.value, 'http://www.example.org/#me');
   equals(triples[2].property.value, 'http://xmlns.com/foaf/0.1/knows');
-  //equals(triples[2].object.type, 'bnode');
   equals(triples[2].object, triples[1].subject);
 	$('#main > div').remove();
 });
@@ -504,11 +475,9 @@ test("Test 0049", function () {
 test("Test 0050", function () {
   setup('<div itemscope itemtype="http://xmlns.com/foaf/0.1/Person"><p itemprop="http://xmlns.com/foaf/0.1/name">John Doe</p></div>');
   var triples = $.microdata.triples($('#main > div'));
-  //equals(triples[0].subject.type, 'bnode');
   equals(triples[0].property.value, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
   equals(triples[0].object.value, 'http://xmlns.com/foaf/0.1/Person');
   equals(triples[0].subject, triples[1].subject);
-  //equals(triples[1].subject.type, 'bnode');
   equals(triples[1].property.value, 'http://xmlns.com/foaf/0.1/name');
   equals(triples[1].object.value, 'John Doe');
 	$('#main > div').remove();
@@ -664,11 +633,9 @@ test('adding microdata to an element: adding a triple where the element already 
   var span = $('#main > p > span');
   $.microdata.addMicrodata($(span),'<#SusannahDarwin> <http://xmlns.com/foaf/0.1/son> <#ErasmusDarwin> .');
   equals(span.attr('itemid'), '#SusannahDarwin');
-  //equals($('#main > p > span > meta').attr('itemprop'), 'http://xmlns.com/foaf/0.1/son'); need to consider a strategy for replacing meta content
-  //equals($('#main > p > span > meta').attr('content'), '#ErasmusDarwin');
   $('#main > p').remove();
 });
-//??????
+
 test('adding microdata to an element: adding a repeat of a triple', function () {
   setup('<p><span datatype="" itemscope itemtype="http://xmlns.com/foaf/0.1/Person" itemid="#CharlesRobertDarwin">'+
 			'<span itemprop="firstName">Charles</span> Robert '+
@@ -722,7 +689,6 @@ test("attempting to remove a itemprop from an element when the itemprop doesn't 
   raises(function() {
     $.microdata.removeMicrodata(span,'<> <http://purl.org/dc/elements/1.1/modified> "Jeni Tennison" .');
   }, "must throw exception to pass");	
-  
   equals($('#main > p > span > span').attr('itemprop'), "http://purl.org/dc/elements/1.1/creator", "the itemprop attribute should not be removed");
   $('#main > p').remove();
 });
@@ -731,32 +697,13 @@ test("removing a itemprop from an element when the itemprop contains multiple va
   setup('<p>This document is by <span itemscope><span itemprop="http://purl.org/dc/elements/1.1/creator http://purl.org/dc/elements/1.1/contributor">Jeni Tennison</span></span>.</p>');
   var span = $('#main > p > span');
   $.microdata.removeMicrodata(span,'<> <http://purl.org/dc/elements/1.1/creator> "Jeni Tennison" .');
-  //????equals($('#main > p > span >span').attr('itemprop'), "http://purl.org/dc/elements/1.1/contributor", "only the relevant value should be removed");
   $('#main > p').remove();
 });
-/*
-test("removing a itemprop resource from an element", function () {
-  setup('<p>This document is by <span itemscope><span itemprop="http://purl.org/dc/elements/1.1/creator http://purl.org/dc/elements/1.1/contributor">Jeni Tennison</span></span>.</p>');
-  var span = $('#main > p > span');
-    $.microdata.removeMicrodata(span);
-  //span.removeMicrodata({ itemprop: $.rdf.resource('<' + ns.namespaces.dc + 'creator>') });
-  equals(span.attr('itemprop'), "http://purl.org/dc/elements/1.1/contributor", "only the relevant value should be removed");
-  $('#main > p').remove();
-});
-/*
-test("removing a relation from an element", function () {
-  setup('<p>This document is by <a rel="http://purl.org/dc/elements/1.1/creator" href="http://www.jenitennison.com/">Jeni Tennison</span>.</p>');
-  var span = $('#main > p > a');
-  span.removeMicrodata({ itemprop: "http://purl.org/dc/elements/1.1/creator" });
-  ok(span.attr('rel') === '' || span.attr('rel') === undefined, "The rel attribute should be removed");
-  $('#main > p').remove();
-});
-*/
+
 test("removing a type from an element", function () {
   setup('<p>This document is by <a itemscope itemid="http://www.jenitennison.com/" itemtype="http://xmlns.com/foaf/0.1/Person">Jeni Tennison</span>.</p>');
   var span = $('#main > p > a');
     $.microdata.removeMicrodata(span);
-  //span.removeMicrodata({ itemtype: "http://xmlns.com/foaf/0.1/Person" });
   equals(span.attr('itemtype'), undefined, "The typeof attribute should be removed");
   $('#main > p').remove();
 });
