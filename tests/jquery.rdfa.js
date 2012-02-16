@@ -120,8 +120,9 @@ test("Structured XML Literal", function () {
 });
 
 test("RDFa from html element", function () {
-  testTriples($('html').rdf(), 
-              [$.rdf.triple('<> <http://www.w3.org/1999/xhtml/vocab#stylesheet> <../jquery/tests/qunit/qunit.css>')]);
+  testTriples($('html').rdfa(), 
+              [$.rdf.triple('<> <http://www.w3.org/1999/xhtml/vocab#stylesheet> <../jquery/tests/qunit/qunit.css>'),
+               $.rdf.triple('<> <http://www.w3.org/1999/xhtml/vocab#stylesheet> <data:text/css,>')]);
 });
 
 test("XMLLiteral including comments", function () {
