@@ -312,6 +312,7 @@
           }
         }
       }
+      var parentLang = lang;
       for (i = 0; i < elem.childNodes.length; i += 1) {
         p = elem.childNodes[i];
         if (p.nodeType === 1) {
@@ -321,9 +322,11 @@
           } else {
             property = $.rdf.resource('<' + p.namespaceURI + getLocalName(p) + '>');
           }
-          lang = getAttributeNS(p, 'http://www.w3.org/XML/1998/namespace', 'lang') || lang;
+          lang = getAttributeNS(p, 'http://www.w3.org/XML/1998/namespace', 'lang') || parentLang;
           if (lang !== null && lang !== undefined && lang !== '') {
             literalOpts = { lang: lang };
+          } else {
+            literalOpts = {};
           }
           if (hasAttributeNS(p, rdfNs, 'resource')) {
             o = getAttributeNS(p, rdfNs, 'resource');
@@ -385,7 +388,7 @@
               }
             }
           } else if (hasAttributeNS(p, rdfNs, 'datatype')) {
-            o = p.childNodes[0].nodeValue;
+            o = p.childNodes[0].nodeValue ? p.childNodes[0].nodeValue : "";
             object = $.rdf.literal(o, { datatype: getAttributeNS(p, rdfNs, 'datatype') });
           } else if (p.getElementsByTagName('*').length > 0) {
             for (j = 0; j < p.childNodes.length; j += 1) {
