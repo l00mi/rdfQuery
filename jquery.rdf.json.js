@@ -33,25 +33,26 @@
     triples: function (data) {
       var s, subject, p, property, o, object, i, opts, triples = [];
       for (s in data) {
-        subject = (s.substring(0, 2) === '_:') ? $.rdf.blank(s) : $.rdf.resource('<' + s + '>');
+        subject = (s.substring(0, 2) === '_:') ? $.rdf.blank(s) : $.rdf.resource('<' + s + '>', {base : this.baseURI});
         for (p in data[s]) {
-          property = $.rdf.resource('<' + p + '>');
+          property = $.rdf.resource('<' + p + '>', {base : this.baseURI});
           for (i = 0; i < data[s][p].length; i += 1) {
             o = data[s][p][i];
             if (o.type === 'uri') {
-              object = $.rdf.resource('<' + o.value + '>');
+              object = $.rdf.resource('<' + o.value + '>', {base : this.baseURI});
             } else if (o.type === 'bnode') {
               object = $.rdf.blank(o.value);
             } else {
               // o.type === 'literal'
               if (o.datatype !== undefined) {
-                object = $.rdf.literal(o.value, { datatype: o.datatype });
+                object = $.rdf.literal(o.value, { datatype: o.datatype, base : this.baseURI });
               } else {
                 opts = {};
                 if (o.lang !== undefined) {
                   opts.lang = o.lang;
                 }
                 var escapedValue = typeof o.value === "string" ? o.value.replace(/\"/g,'\\"') : o.value;
+                opts.base = this.baseURI;
                 object = $.rdf.literal('"' + escapedValue + '"', opts);
               }
             }

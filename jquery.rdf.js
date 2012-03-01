@@ -1727,7 +1727,7 @@
         if (typeof data === 'string') {
           data = parser.parse(data);
         }
-        triples = parser.triples(data);
+        triples = parser.triples.call(this, data);
         for (i = 0; i < triples.length; i += 1) {
           this.add(triples[i], opts);
         }
